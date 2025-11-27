@@ -46,14 +46,14 @@ const email = ref('')
 const users = ref([])
 
 async function loadUsers() {
-  const res = await fetch('/php/list_users.php')
+  const res = await fetch('/clubeo_php_api/list_users.php')
   users.value = await res.json()
 }
 
 async function createUser() {
   const newUser = { name: name.value, email: email.value }
 
-  const res = await fetch('/php/create_user.php', {
+  const res = await fetch('/clubeo_php_api/create_user.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newUser)
