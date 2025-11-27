@@ -10,31 +10,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Usar Node
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
+      # 3. Instalar dependências do Nuxt
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd clubeo_app
+          npm install
 
+      # 4. Gerar site estático
       - name: Generate Nuxt static site
-        run: npm run generate
+        run: |
+          cd clubeo_app
+          npm run generate
 
-      # Deploy Nuxt (.output/public/)
+      # 5. Deploy NUXT
       - name: FTP Deploy Nuxt
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./.output/public/
+          local-dir: ./clubeo_app/.output/public/
           server-dir: /
 
-      # Deploy PHP API (clubeo_php_api/)
+      # 6. Deploy PHP API
       - name: FTP Deploy PHP API
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
