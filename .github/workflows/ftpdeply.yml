@@ -8,6 +8,7 @@ on:
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -23,22 +24,22 @@ jobs:
       - name: Generate Nuxt static site
         run: npm run generate
 
-      # Deploy Nuxt
+      # Deploy Nuxt (.output/public/)
       - name: FTP Deploy Nuxt
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: /  # / no final
+          local-dir: ./.output/public/
+          server-dir: /
 
-      # Deploy PHP
-      - name: FTP Deploy PHP
+      # Deploy PHP API (clubeo_php_api/)
+      - name: FTP Deploy PHP API
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./php/
-          server-dir: /php/  # / no final
+          local-dir: ./clubeo_php_api/
+          server-dir: /clubeo_php_api/
