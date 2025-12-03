@@ -1,11 +1,11 @@
 <template>
   <div class="main-container">
     
-    <aside class="sidebar">
+    <aside class="sidebar bg-custom-cards_menu">
       <Menu />
     </aside>
 
-    <main class="content">
+    <main class="content bg-custom-background">
       <slot />
     </main>
 
@@ -14,11 +14,9 @@
 
 <style scoped>
 .main-container {
-  display: flex;           
+  display: flex;
   width: 100%;
-  max-width: 1200px;     
-  margin: 0 auto;          
-  min-height: 100vh;       
+  min-height: 100vh;
 }
 
 .sidebar {

@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* (Light Mode) */
+  --background: #F3F4F6;
+  --cards_menus: #FFFFFF;
+  --first_text: #111827;
+  --second_text: #6B7280;
+  --highlight: #6366F1;
+  --corners: #E5E7EB;
+}
+
+.dark {
+  /* (Dark Mode) */
+  --background: #111827;
+  --cards_menus: #1F2937;
+  --first_text: #F9FAFB;
+  --second_text: #9CA3AF;
+  --highlight: #818CF8;
+  --corners: #374151;
+}
