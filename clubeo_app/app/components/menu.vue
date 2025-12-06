@@ -38,7 +38,7 @@
         <div class="mt-auto w-full">
             <button @click="toggleTheme">Change</button>
 
-            <NuxtLink to="/login">
+            <NuxtLink to="/register">
                 <div class="perfil">
                     <p>John Doe</p>
                     <p>Online</p>
