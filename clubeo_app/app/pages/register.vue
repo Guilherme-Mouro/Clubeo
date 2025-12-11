@@ -26,16 +26,32 @@ const form = ref({
 })
 
 const register = async () => {
-  const res = await fetch("/clubeo_php_api/authUser?action=register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      username: form.value.username,
-      email: form.value.email,
-      password: form.value.password,
-    })
-  });
+  try {
+    const res = await fetch("http://localhost/clubeo_php_api/register.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: form.value.username,
+        email: form.value.email,
+        password: form.value.password,
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        alert(data.error || "An unknown error occurred");
+        return;
+    }
+
+    alert("Account created successfully! Please login.");
+    navigateTo('/login');
+
+  } catch (error) {
+    console.error(error);
+    alert("Connection error");
+  }
 }
 </script>

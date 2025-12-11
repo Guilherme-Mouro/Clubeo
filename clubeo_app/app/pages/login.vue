@@ -15,24 +15,40 @@
 
 <script setup>
 definePageMeta({
-    layout: 'auth'
+  layout: 'auth'
 })
 
 const form = ref({
-    email: '',
-    password: '',
+  email: '',
+  password: '',
 })
 
 const login = async () => {
-  const res = await fetch("/clubeo_php_api/authUser?action=login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email: form.value.email,
-      password: form.value.password,
-    })
-  });
+  try {
+    const res = await fetch("http://localhost/clubeo_php_api/login.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: form.value.email,
+        password: form.value.password,
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        alert(data.error || "Login failed");
+        return;
+    }
+
+    alert("Login successful!");
+    navigateTo('/');
+
+  } catch (error) {
+    console.error(error);
+    alert("Connection error");
+  }
 }
 </script>
