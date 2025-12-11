@@ -1,23 +1,28 @@
 <template>
-    <AuthCard title="Join Us!" button="Register" @login="register">
-        <form>
-            <input v-model="form.username" placeholder="Username"></input>
-            <input v-model="form.email" placeholder="Email"></input>
-            <input v-model="form.password" placeholder="Password"></input>
-
-        </form>
-    </AuthCard>
+  <AuthCard title="Join Us!" button="Register" @login="register">
+    <form class="flex flex-col">
+      <InputCard v-model="form.username" value="Username"></InputCard>
+      <InputCard v-model="form.email" value="Email"></InputCard>
+      <InputCard v-model="form.password" value="Password"></InputCard>
+    </form>
+    <p class="text-custom-first_text">
+      Already have an account?
+      <NuxtLink class="text-custom-highlight" to="/login">
+        Login here!
+      </NuxtLink>
+    </p>
+  </AuthCard>
 </template>
 
 <script setup>
 definePageMeta({
-    layout: 'auth'
+  layout: 'auth'
 })
 
 const form = ref({
-    username: '',
-    email: '',
-    password: '',
+  username: '',
+  email: '',
+  password: '',
 })
 
 const register = async () => {

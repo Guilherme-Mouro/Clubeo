@@ -4,7 +4,6 @@ require 'db.php';
 
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// --- ROUTER (qual função chamar?) ---
 $action = $_GET['action'] ?? null;
 
 switch ($action) {
