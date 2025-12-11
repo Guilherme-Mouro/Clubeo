@@ -25,7 +25,7 @@ const form = ref({
 
 const login = async () => {
   try {
-    const res = await fetch("http://localhost/clubeo_php_api/login.php", {
+    const res = await fetch("/clubeo_php_api/login.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

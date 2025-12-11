@@ -27,7 +27,7 @@ const form = ref({
 
 const register = async () => {
   try {
-    const res = await fetch("http://localhost/clubeo_php_api/register.php", {
+    const res = await fetch("/clubeo_php_api/register.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
