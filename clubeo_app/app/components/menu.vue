@@ -40,8 +40,8 @@
 
             <NuxtLink to="/register">
                 <div class="perfil">
-                    <p>John Doe</p>
-                    <p>Online</p>
+                    <p>{{ user.username }}</p>
+                    <p>{{ user.online }}</p>
                 </div>
             </NuxtLink>
         </div>
@@ -56,6 +56,40 @@ const mode = useColorMode()
 const toggleTheme = () => {
     mode.preference = mode.preference === 'dark' ? 'light' : 'dark'
 }
+
+const config = useRuntimeConfig()
+const user = ref(null)
+
+const fetchUserData = async (userId) => {
+  try {
+    const res = await fetch(`/clubeo_php_api/getUser.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId }) 
+    });
+
+    const data = await res.json()
+
+    if (res.ok) {
+      user.value = data.user
+    } else {
+      console.error(data.error)
+    }
+
+  } catch (error) {
+    console.error("Connection error")
+  }
+}
+
+onMounted(() => {
+    const storedId = localStorage.getItem('userId') 
+    
+    if (storedId) {
+        fetchUserData(storedId)
+    } else {
+        navigateTo('/login')
+    }
+})
 
 </script>
 

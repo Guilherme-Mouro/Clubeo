@@ -1,16 +1,16 @@
 <template>
-    <AuthCard title="Welcome Back!" button="Login" @login="login">
-        <form class="flex flex-col">
-            <InputCard v-model="form.email" value="Email"></InputCard>
-            <InputCard v-model="form.password" value="Password"></InputCard>
-        </form>
-        <p class="text-custom-first_text">
-            Don't have an account?
-            <NuxtLink class="text-custom-highlight" to="/register">
-                Create one here!
-            </NuxtLink>
-        </p>
-    </AuthCard>
+  <AuthCard title="Welcome Back!" button="Login" @login="login">
+    <form class="flex flex-col" @submit.prevent>
+      <InputCard v-model="form.email" placeholder="Email" type="email" />
+      <InputCard v-model="form.password" placeholder="Password" type="password" />
+    </form>
+    <p class="text-custom-first_text">
+      Don't have an account?
+      <NuxtLink class="text-custom-highlight" to="/register">
+        Create one here!
+      </NuxtLink>
+    </p>
+  </AuthCard>
 </template>
 
 <script setup>
@@ -36,19 +36,21 @@ const login = async () => {
       })
     });
 
-    const data = await res.json();
+    const data = await res.json()
 
     if (!res.ok) {
-        alert(data.error || "Login failed");
-        return;
+      alert(data.error || "Login failed")
+      return;
     }
 
-    alert("Login successful!");
-    navigateTo('/');
+    localStorage.setItem('userId', data.user.id)
+
+    alert("Login successful!")
+    navigateTo('/')
 
   } catch (error) {
     console.error(error);
-    alert("Connection error");
+    alert("Connection error")
   }
 }
 </script>

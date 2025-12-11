@@ -1,9 +1,9 @@
 <template>
   <AuthCard title="Join Us!" button="Register" @login="register">
-    <form class="flex flex-col">
-      <InputCard v-model="form.username" value="Username"></InputCard>
-      <InputCard v-model="form.email" value="Email"></InputCard>
-      <InputCard v-model="form.password" value="Password"></InputCard>
+    <form class="flex flex-col" @submit.prevent>
+      <InputCard v-model="form.username" placeholder="Username" />
+      <InputCard v-model="form.email" placeholder="Email" type="email" />
+      <InputCard v-model="form.password" placeholder="Password" type="password" />
     </form>
     <p class="text-custom-first_text">
       Already have an account?
@@ -13,6 +13,7 @@
     </p>
   </AuthCard>
 </template>
+
 
 <script setup>
 definePageMeta({
@@ -42,12 +43,12 @@ const register = async () => {
     const data = await res.json();
 
     if (!res.ok) {
-        alert(data.error || "An unknown error occurred");
-        return;
+      alert(data.error || "An unknown error occurred");
+      return;
     }
 
-    alert("Account created successfully! Please login.");
-    navigateTo('/login');
+    alert("Account created successfully!");
+    navigateTo('/');
 
   } catch (error) {
     console.error(error);
