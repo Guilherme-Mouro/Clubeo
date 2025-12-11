@@ -40,8 +40,8 @@
 
             <NuxtLink to="/register">
                 <div class="perfil">
-                    <p>{{ user.username }}</p>
-                    <p>{{ user.online }}</p>
+                    <p v-if="user">{{ user.username }}</p>
+                    <p v-if="user">{{ user.online }}</p>
                 </div>
             </NuxtLink>
         </div>
