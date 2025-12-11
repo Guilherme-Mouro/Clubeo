@@ -1,5 +1,5 @@
 <?php
-$host = "localhost";       // ou o host que a Hostinger fornece
+$host = "localhost";
 $dbname = "u506280443_guimouDB";
 $username = "u506280443_guimoudbUser";
 $password = "oC5~$2OSxKJ?";
