@@ -20,7 +20,7 @@
 }
 
 .sidebar {
-  width: 250px;         
+  width: 300px;         
   flex-shrink: 0;         
   padding: 20px;
 }
