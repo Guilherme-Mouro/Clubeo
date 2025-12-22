@@ -20,7 +20,7 @@ const createClub = async () => {
       body: JSON.stringify({
         name: form.value.name,
         description: form.value.description,
-        adminId: 1,
+        adminId: localStorage.getItem('userId'),
       })
     });
 
