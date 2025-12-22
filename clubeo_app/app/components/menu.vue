@@ -91,13 +91,13 @@ onMounted(() => {
     if (storedId) {
         fetchUserData(storedId)
     } else {
-        navigateTo('/login')
+        //navigateTo('/login')
 
-        // user.value = {
-        //     id: 1,
-        //     username: 'Admin',
-        //     online: 1,
-        // }
+        user.value = {
+            id: 1,
+            username: 'Admin',
+            online: 1,
+        }
     }
 })
 
