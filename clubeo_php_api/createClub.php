@@ -24,7 +24,7 @@ try {
     $stmt->execute([
         'name' => $name,
         'description' => $description,
-        'admin_id' => $adminId
+        'adminId' => $adminId
     ]);
 
     http_response_code(201);
