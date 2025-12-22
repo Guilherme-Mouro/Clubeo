@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col h-screen">
         <div class="p-2">
-            <h1 class="text-custom-highlight font-bold text-3xl">Clubeo</h1>
+            <h1 class="text-custom-highlight font-bold text-5xl">Clubeo</h1>
         </div>
 
         <nav class="mb-5">
@@ -13,7 +13,7 @@
                     </NuxtLink>
                 </li>
                 <li class="menu-items">
-                    <NuxtLink to="/" class="flex items-center gap-1 p-2 w-full">
+                    <NuxtLink to="/discover" class="flex items-center gap-1 p-2 w-full">
                         <RocketLaunchIcon class="w-5 h-5" />
                         <strong>Discover</strong>
                     </NuxtLink>
