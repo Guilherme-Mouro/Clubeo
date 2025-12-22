@@ -1,23 +1,27 @@
 <template>
     Discover new Clubs or create your own
     <button @click="creatClub" class="bg-custom-highlight">Create a new club</button>
+
+    <div v-for="club in clubsList" :key="club.id" class="club-card">
+        <h3>{{ club.name }}</h3>
+        <p>{{ club.description }}</p>
+        <div class="meta">ID: {{ club.id }} | Admin ID: {{ club.admin_id }}</div>
+      </div>
 </template>
 
 <script setup>
 const creatClub = () => navigateTo('/create-club')
 
-const fetchUserData = async (userId) => {
+const clubs = ref([])
+
+const fetchClubs = async (userId) => {
     try {
-        const res = await fetch(`/clubeo_php_api/getClubs.php`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: userId })
-        });
+        const res = await fetch(`/clubeo_php_api/getClubs.php`);
 
         const data = await res.json()
 
         if (res.ok) {
-            user.value = data.user
+            clubs.value = data
         } else {
             console.error(data.error)
         }
