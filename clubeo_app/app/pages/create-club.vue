@@ -1,6 +1,7 @@
 <template>
     <InputCard v-model="form.name" placeholder="Club name"/>
     <InputCard v-model="form.description" placeholder="Description"/>
+    <button @click="createClub">Create</button>
 </template>
 
 <script setup>
@@ -9,7 +10,7 @@ const form = ref({
   description: '',
 })
 
-const login = async () => {
+const createClub = async () => {
   try {
     const res = await fetch("/clubeo_php_api/createClub.php", {
       method: "POST",
