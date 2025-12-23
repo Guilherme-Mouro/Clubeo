@@ -4,7 +4,7 @@
             <input @change="toggleTheme" type="checkbox">
             <span class="slider round"></span>
         </label>
-        <p class="bg-custom-background text-custom-first_text p-1" v-if="showLabel">Change Color Mode</p>
+        <p class="bg-custom-background text-custom-first_text rounded-lg p-2" v-if="showLabel">Change Color Mode</p>
     </div>
 </template>
 

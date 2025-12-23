@@ -28,13 +28,11 @@
         </nav>
 
         <br>
-        <hr>
-        <br>
+        <hr><br>
 
         <div>
             <h4 class="text-custom-second_text">My Clubs</h4>
-            <div class="flex flex-row">
-            </div>
+            <div class="flex flex-row"></div>
         </div>
 
         <div class="mt-auto mb-10">
@@ -47,7 +45,7 @@
                     <div class="flex flex-col">
                         <p class="text-custom-first_text"><strong>{{ user.username }}</strong></p>
 
-                        <p v-if="user.online" class="flex items-center gap-2 text-green-600">
+                        <p v-if="user.online == 1" class="flex items-center gap-2 text-green-600">
                             <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
                             Online
                         </p>
@@ -64,9 +62,29 @@
 
 <script setup>
 import { BellAlertIcon, HomeIcon, RocketLaunchIcon } from '@heroicons/vue/16/solid'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const config = useRuntimeConfig()
 const user = ref(null)
+
+const updateOnlineStatus = (status) => {
+    const userId = user.value?.id || localStorage.getItem('userId');
+    if (!userId) return;
+
+    const url = '/clubeo_php_api/updateUserStatus.php';
+    const payload = JSON.stringify({ id: userId, status: status });
+
+    if (status === 0 && navigator.sendBeacon) {
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon(url, blob);
+    } else {
+        fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: payload
+        }).catch(err => console.error("Erro ao atualizar status:", err));
+    }
+}
 
 const fetchUserData = async (userId) => {
     try {
@@ -75,23 +93,20 @@ const fetchUserData = async (userId) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: userId })
         });
-
         const data = await res.json()
-
         if (res.ok) {
             user.value = data.user
-        } else {
-            console.error(data.error)
+            updateOnlineStatus(1);
         }
-
     } catch (error) {
         console.error("Connection error")
     }
 }
 
+const handleTabClose = () => updateOnlineStatus(0);
+
 onMounted(() => {
     const storedId = localStorage.getItem('userId')
-
     if (storedId) {
         fetchUserData(storedId)
     } else {
@@ -103,20 +118,32 @@ onMounted(() => {
             online: 1,
         }
     }
+
+    window.addEventListener('beforeunload', handleTabClose);
 })
 
+onUnmounted(() => {
+    window.removeEventListener('beforeunload', handleTabClose);
+})
 </script>
 
 <style scoped>
 .menu-items {
+
     @apply text-custom-second_text rounded-lg mb-1 transition-colors
 }
 
+
+
 .menu-items:hover {
+
     @apply bg-custom-highlight text-custom-first_text
 }
 
+
+
 .profile {
+
     @apply flex flex-row bg-custom-corners rounded-lg p-5
 }
 </style>
