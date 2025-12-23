@@ -1,7 +1,9 @@
 <template>
-    <InputCard v-model="form.name" placeholder="Club name"/>
-    <InputCard v-model="form.description" placeholder="Description"/>
-    <button @click="createClub">Create</button>
+  <div class="flex flex-col">
+    <InputCard v-model="form.name" placeholder="Club name" />
+    <InputCard v-model="form.description" placeholder="Description" />
+    <button class="bg-custom-highlight text-white font-bold rounded-lg p-2" @click="createClub">Create</button>
+  </div>
 </template>
 
 <script setup>

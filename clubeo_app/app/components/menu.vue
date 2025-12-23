@@ -4,7 +4,7 @@
             <h1 class="text-custom-highlight font-bold text-5xl">Clubeo</h1>
         </div>
 
-        <nav class="mb-5">
+        <nav>
             <ul>
                 <li class="menu-items">
                     <NuxtLink to="/" class="flex items-center gap-1 p-2 w-full">
@@ -32,7 +32,7 @@
         <br>
 
         <div>
-            <h4 class="text-custom-second_text mt-5">My Clubs</h4>
+            <h4 class="text-custom-second_text">My Clubs</h4>
             <div class="flex flex-row">
             </div>
         </div>
@@ -50,6 +50,10 @@
                         <p v-if="user.online" class="flex items-center gap-2 text-green-600">
                             <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
                             Online
+                        </p>
+                        <p v-else class="flex items-center gap-2 text-red-600">
+                            <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                            Offline
                         </p>
                     </div>
                 </div>

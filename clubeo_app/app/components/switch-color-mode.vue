@@ -1,10 +1,10 @@
 <template>
     <div class="flex flex-row items-center" @mouseenter="showLabel = true" v-on:mouseleave="showLabel = false">
-        <label class="switch">
+        <label class="switch mr-2">
             <input @change="toggleTheme" type="checkbox">
             <span class="slider round"></span>
         </label>
-        <p class="text-custom-first_text" v-if="showLabel">Change Color Mode</p>
+        <p class="bg-custom-background text-custom-first_text p-1" v-if="showLabel">Change Color Mode</p>
     </div>
 </template>
 

@@ -1,11 +1,13 @@
 <template>
-    <div class="flex flex-row items-center">
-        <SearchBar v-model="searchQuery"/>
-        <button @click="creatClub" class="bg-custom-highlight ml-10 text-custom-first_text font-bold rounded-lg p-2">Create a
+    <div class="flex flex-row items-center mb-12">
+        <SearchBar v-model="searchQuery" />
+        <button @click="creatClub"
+            class="bg-custom-highlight ml-10 text-custom-first_text font-bold rounded-lg p-2">Create a
             new club +</button>
     </div>
 
-    <div v-for="club in filteredClubs" :key="club.id" class="flex flex-row items-center bg-custom-cards_menu rounded-lg p-2">
+    <div v-for="club in filteredClubs" :key="club.id" @click="goToClub(club.id)"
+        class="flex flex-row items-center bg-custom-cards_menu rounded-lg p-2 mb-5">
         <Avatar />
         <div class="flex flex-col ml-4">
             <h3 class="text-custom-highlight font-bold text-3xl">{{ club.name }}</h3>
@@ -33,7 +35,7 @@ const filteredClubs = computed(() => {
     })
 })
 
-const fetchClubs = async (userId) => {
+const fetchClubs = async () => {
     try {
         const res = await fetch(`/clubeo_php_api/getClubs.php`);
 
@@ -53,4 +55,8 @@ const fetchClubs = async (userId) => {
 onMounted(() => {
     fetchClubs()
 })
+
+const goToClub = (id) => {
+    navigateTo(`/club/${id}`)
+}
 </script>
