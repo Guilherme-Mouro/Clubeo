@@ -14,9 +14,9 @@ try {
         exit;
     }
 
-    $stmt = $pdo->query("SELECT * FROM clubs WHERE id = :id");
+    $stmt = $pdo->prepare("SELECT * FROM clubs WHERE id = :id");
     $stmt->execute(["id"=> $id]);
-    $club = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $club = $stmt->fetch(PDO::FETCH_ASSOC);
 
     echo json_encode($club);
 

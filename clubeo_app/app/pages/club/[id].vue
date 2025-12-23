@@ -1,7 +1,32 @@
 <template>
-    <div v-if="club">
-        <h1>{{ club.name }}</h1>
-    </div>
+    <header v-if="club">
+        <div
+            class="flex flex-col md:flex-row md:items-center md:justify-between bg-custom-cards_menu rounded-xl p-8 gap-6">
+
+            <div class="flex flex-row items-center gap-5">
+                <div class="shrink-0">
+                    <Avatar />
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <h1 class="text-custom-highlight font-bold text-4xl md:text-6xl tracking-tight">
+                        {{ club.name }}
+                    </h1>
+
+                    <div class="flex flex-wrap items-center gap-2 text-custom-first_text opacity-90">
+                        <p><strong>32.156</strong> members</p>
+                        <span class="hidden md:inline">•</span>
+                        <p class="italic">{{ club.description }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                class="w-full md:w-auto bg-custom-highlight hover:opacity-90 text-white font-bold rounded-lg px-8 py-3 transition-all duration-200 shadow-lg">
+                Join Club
+            </button>
+        </div>
+    </header>
 </template>
 
 <script setup>
