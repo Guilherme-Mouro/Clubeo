@@ -2,7 +2,7 @@
     <div class="flex flex-row items-center mb-12">
         <SearchBar v-model="searchQuery" />
         <button @click="creatClub"
-            class="bg-custom-highlight ml-10 text-custom-first_text font-bold rounded-lg p-2">Create a
+            class="bg-custom-highlight ml-10 text-white font-bold rounded-lg p-2">Create a
             new club +</button>
     </div>
 
