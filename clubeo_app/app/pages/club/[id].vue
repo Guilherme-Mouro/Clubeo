@@ -27,6 +27,7 @@
             </button>
         </div>
     </header>
+    <div v-else class="text-custom-first_text font-bold">Loading...</div>
 </template>
 
 <script setup>
