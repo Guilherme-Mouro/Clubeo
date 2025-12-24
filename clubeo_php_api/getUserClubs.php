@@ -15,15 +15,15 @@ try {
     }
 
     $userId = $data["userId"];
-
-    $sql = "SELECT c.id, c.name, c.description, c.image 
-            FROM clubs c
-            INNER JOIN club_members cm ON c.id = cm.club_id
-            WHERE cm.user_id = :userId";
+    
+    $sql = "SELECT c.id, c.name, c.description, c.image_banner 
+        FROM clubs c
+        INNER JOIN club_members cm ON c.id = cm.club_id
+        WHERE cm.user_id = :userId";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['userId' => $userId]);
-    
+
     $clubs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode($clubs);
