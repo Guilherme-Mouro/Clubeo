@@ -141,14 +141,14 @@ onMounted(async () => {
         await fetchUserData(storedId)
         await fetchUserClubs(storedId)
     } else {
-        //navigateTo('/login')
+        navigateTo('/login')
 
-        user.value = {
-            id: 1,
-            username: 'Admin',
-            online: 1,
-            clubs: []
-        }
+        // user.value = {
+        //     id: 1,
+        //     username: 'Admin',
+        //     online: 1,
+        //     clubs: []
+        // }
     }
 
     window.addEventListener('beforeunload', handleTabClose);
