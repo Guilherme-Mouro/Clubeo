@@ -8,7 +8,7 @@
 
     <div v-for="club in filteredClubs" :key="club.id" @click="goToClub(club.id)"
         class="flex flex-row items-center bg-custom-cards_menu rounded-lg p-2 mb-5">
-        <Avatar />
+        <Avatar />  
         <div class="flex flex-col ml-4">
             <h3 class="text-custom-highlight font-bold text-3xl">{{ club.name }}</h3>
             <p class="text-custom-first_text">{{ club.description }}</p>

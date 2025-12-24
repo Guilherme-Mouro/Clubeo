@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col h-screen">
         <div class="p-2">
-            <h1 class="text-custom-highlight font-bold text-5xl">Clubeo</h1>
+            <h1 class="text-custom-highlight font-bold text-6xl">Clubeo</h1>
         </div>
 
         <nav>
@@ -32,7 +32,12 @@
 
         <div>
             <h4 class="text-custom-second_text">My Clubs</h4>
-            <div class="flex flex-row"></div>
+            <div class="flex flex-row">
+                <div class="flex flex-col" v-for="club in user?.clubs" :key="club.id">
+                    <Avatar />
+                    <p class="text-custom-first_text">{{ club.name }}</p>
+                </div>
+            </div>
         </div>
 
         <div class="mt-auto mb-10">
@@ -64,8 +69,12 @@
 import { BellAlertIcon, HomeIcon, RocketLaunchIcon } from '@heroicons/vue/16/solid'
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const config = useRuntimeConfig()
-const user = ref(null)
+const user = ref({
+    id: null,
+    username: '',
+    online: 0,
+    clubs: []
+})
 
 const updateOnlineStatus = (status) => {
     const userId = user.value?.id || localStorage.getItem('userId');
@@ -95,7 +104,7 @@ const fetchUserData = async (userId) => {
         });
         const data = await res.json()
         if (res.ok) {
-            user.value = data.user
+            user.value = { ...user.value, ...data.user };
             updateOnlineStatus(1);
         }
     } catch (error) {
@@ -103,12 +112,34 @@ const fetchUserData = async (userId) => {
     }
 }
 
+const fetchUserClubs = async (userId) => {
+    try {
+        const res = await fetch(`/clubeo_php_api/getUserClubs.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: userId })
+        });
+
+        const data = await res.json()
+
+        if (res.ok) {
+            user.value.clubs = data;
+        } else {
+            console.error(data.error)
+        }
+
+    } catch (error) {
+        console.error("Connection error")
+    }
+}
+
 const handleTabClose = () => updateOnlineStatus(0);
 
-onMounted(() => {
+onMounted(async () => {
     const storedId = localStorage.getItem('userId')
     if (storedId) {
-        fetchUserData(storedId)
+        await fetchUserData(storedId)
+        await fetchUserClubs(storedId)
     } else {
         //navigateTo('/login')
 
@@ -116,6 +147,7 @@ onMounted(() => {
             id: 1,
             username: 'Admin',
             online: 1,
+            clubs: []
         }
     }
 
@@ -129,21 +161,14 @@ onUnmounted(() => {
 
 <style scoped>
 .menu-items {
-
     @apply text-custom-second_text rounded-lg mb-1 transition-colors
 }
 
-
-
 .menu-items:hover {
-
     @apply bg-custom-highlight text-custom-first_text
 }
 
-
-
 .profile {
-
     @apply flex flex-row bg-custom-corners rounded-lg p-5
 }
 </style>
