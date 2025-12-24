@@ -33,7 +33,7 @@
         <div>
             <h4 class="text-custom-second_text mb-2">My Clubs</h4>
             <div class="flex flex-row">
-                <div class="mb-2" v-for="club in user?.clubs" :key="club.id" @click="goToClub(club.id)">
+                <div class="mr-2" v-for="club in user?.clubs" :key="club.id" @click="goToClub(club.id)">
                     <Avatar />
                 </div>
             </div>

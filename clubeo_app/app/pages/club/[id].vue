@@ -14,7 +14,7 @@
                     </h1>
 
                     <div class="flex flex-wrap items-center gap-2 text-custom-first_text opacity-90">
-                        <p><strong>32.156</strong> members</p>
+                        <p><strong>{{club.members_num}}</strong> members</p>
                         <span class="hidden md:inline">•</span>
                         <p class="italic">{{ club.description }}</p>
                     </div>
