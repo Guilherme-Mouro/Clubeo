@@ -31,11 +31,10 @@
         <hr><br>
 
         <div>
-            <h4 class="text-custom-second_text">My Clubs</h4>
+            <h4 class="text-custom-second_text mb-2">My Clubs</h4>
             <div class="flex flex-row">
-                <div class="flex flex-col" v-for="club in user?.clubs" :key="club.id">
+                <div class="mb-2" v-for="club in user?.clubs" :key="club.id" @click="goToClub(club.id)">
                     <Avatar />
-                    <p class="text-custom-first_text">{{ club.name }}</p>
                 </div>
             </div>
         </div>
@@ -133,6 +132,10 @@ const fetchUserClubs = async (userId) => {
     }
 }
 
+const goToClub = (id) => {
+    navigateTo(`/club/${id}`)
+}
+
 const handleTabClose = () => updateOnlineStatus(0);
 
 onMounted(async () => {
@@ -141,14 +144,14 @@ onMounted(async () => {
         await fetchUserData(storedId)
         await fetchUserClubs(storedId)
     } else {
-        navigateTo('/login')
+        //navigateTo('/login')
 
-        // user.value = {
-        //     id: 1,
-        //     username: 'Admin',
-        //     online: 1,
-        //     clubs: []
-        // }
+        user.value = {
+            id: 1,
+            username: 'Admin',
+            online: 1,
+            clubs: []
+        }
     }
 
     window.addEventListener('beforeunload', handleTabClose);

@@ -22,6 +22,7 @@
             </div>
 
             <button
+                @click="joinClub"
                 class="w-full md:w-auto bg-custom-highlight hover:opacity-90 text-white font-bold rounded-lg px-8 py-3 transition-all duration-200 shadow-lg">
                 Join Club
             </button>
@@ -36,6 +37,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const club = ref(null)
+const userId = localStorage.getItem('userId')
 
 const fetchClubDetails = async () => {
     try {
@@ -55,7 +57,20 @@ const fetchClubDetails = async () => {
     }
 }
 
+const joinClub = () => {
+    try {
+        const res = fetch(`/clubeo_php_api/insertClubMembers.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ clubId: club.value.id, userId: userId })
+        });
+    } catch (error) {
+        console.error("Connection error")
+    }
+}
+
 onMounted(() => {
     fetchClubDetails()
 })
+
 </script>

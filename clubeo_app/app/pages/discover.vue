@@ -1,18 +1,12 @@
 <template>
     <div class="flex flex-row items-center mb-12">
         <SearchBar v-model="searchQuery" />
-        <button @click="creatClub"
-            class="bg-custom-highlight ml-10 text-white font-bold rounded-lg p-2">Create a
+        <button @click="creatClub" class="bg-custom-highlight ml-10 text-white font-bold rounded-lg p-2">Create a
             new club +</button>
     </div>
 
-    <div v-for="club in filteredClubs" :key="club.id" @click="goToClub(club.id)"
-        class="flex flex-row items-center bg-custom-cards_menu rounded-lg p-2 mb-5">
-        <Avatar />  
-        <div class="flex flex-col ml-4">
-            <h3 class="text-custom-highlight font-bold text-3xl">{{ club.name }}</h3>
-            <p class="text-custom-first_text">{{ club.description }}</p>
-        </div>
+    <div v-for="club in filteredClubs" :key="club.id" @click="goToClub(club.id)">
+        <ClubCard :name="club.name" :description="club.description"/>
     </div>
 
 </template>
