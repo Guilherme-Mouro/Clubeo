@@ -28,6 +28,8 @@ const createClub = async () => {
 
     const data = await res.json()
 
+    navigateTo('/discover')
+
     if (!res.ok) {
       alert(data.error || "Error creating club")
       return;
