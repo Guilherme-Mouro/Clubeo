@@ -30,7 +30,7 @@
     <div v-else class="text-custom-first_text font-bold">Loading...</div>
 
     <div>
-        <button class="bg-custom-highlight text-custom-first_text font-bold rounded-lg p-2" @click="toPost">Post
+        <button class="bg-custom-highlight text-custom-white font-bold rounded-lg p-2" @click="toPost">Post
             +</button>
     </div>
 

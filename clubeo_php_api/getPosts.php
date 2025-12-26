@@ -14,7 +14,7 @@ try {
         exit;
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM posts WHERE club_id = :id ORDER BY id DESC");
+    $stmt = $pdo->prepare("SELECT * FROM posts WHERE club_id = :id");
     $stmt->execute(["id" => $id]);
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
