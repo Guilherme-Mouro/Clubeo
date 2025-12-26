@@ -30,7 +30,13 @@
     <div v-else class="text-custom-first_text font-bold">Loading...</div>
 
     <div>
-        <button class="bg-custom-highlight text-custom-first_text font-bold rounded-lg p-2" @click="toPost">Post +</button>
+        <button class="bg-custom-highlight text-custom-first_text font-bold rounded-lg p-2" @click="toPost">Post
+            +</button>
+    </div>
+
+
+    <div v-for="post in posts" :key="post.id">
+        <p>{{ post.content }}</p>
     </div>
 </template>
 
@@ -40,49 +46,62 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const club = ref(null)
+const posts = ref([])
 const userId = localStorage.getItem('userId')
+
+const clubIdFromRoute = route.params.id 
 
 const toPost = () => {
     navigateTo({
         path: `/club/create-post`,
-        query: {
-            clubId: club.value.id
-        }
+        query: { clubId: clubIdFromRoute }
     })
 }
 
 const fetchClubDetails = async () => {
     try {
-        const id = route.params.id
-        const res = await fetch(`/clubeo_php_api/getClubDetails.php?id=${id}`);
-
+        const res = await fetch(`/clubeo_php_api/getClubDetails.php?id=${clubIdFromRoute}`);
         const data = await res.json()
-
-        if (res.ok) {
-            club.value = data
-        } else {
-            console.error(data.error)
-        }
-
+        if (res.ok) club.value = data
     } catch (error) {
-        console.error("Connection error")
+        console.error("Erro ao carregar detalhes do clube")
     }
 }
 
-const joinClub = () => {
+const fetchPosts = async () => {
     try {
-        const res = fetch(`/clubeo_php_api/insertClubMembers.php`, {
+        const res = await fetch(`/clubeo_php_api/getPosts.php?id=${clubIdFromRoute}`);
+        const data = await res.json()
+        if (res.ok) {
+            posts.value = data
+        }
+    } catch (error) {
+        console.error("Erro ao carregar posts")
+    }
+}
+
+const joinClub = async () => {
+    try {
+        const res = await fetch(`/clubeo_php_api/insertClubMembers.php`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ clubId: club.value.id, userId: userId })
+            body: JSON.stringify({ 
+                clubId: clubIdFromRoute, 
+                userId: userId 
+            })
         });
+        
+        if (res.ok) {
+            alert("Você entrou no clube!");
+            fetchClubDetails();
+        }
     } catch (error) {
-        console.error("Connection error")
+        console.error("Erro ao entrar no clube")
     }
 }
 
 onMounted(() => {
     fetchClubDetails()
+    fetchPosts()
 })
-
 </script>
