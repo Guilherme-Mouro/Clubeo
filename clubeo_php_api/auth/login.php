@@ -1,6 +1,6 @@
 <?php
 // CORS and Security Headers
-$allowed_origin = "https://guimou.antrob.eu";
+$allowed_origin = "https://guimou.antrob.eu/login";
 header("Access-Control-Allow-Origin: $allowed_origin");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
