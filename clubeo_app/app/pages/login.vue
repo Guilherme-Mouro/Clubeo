@@ -58,7 +58,7 @@ const login = async () => {
   isLoading.value = true
 
   try {
-    const res = await fetch("/clubeo_php_api/auth/login.php", {
+    const res = await fetch("/clubeo_php_api/login.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
