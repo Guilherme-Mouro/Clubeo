@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 // CORS and Security Headers
 $allowed_origin = "https://guimou.antrob.eu/register";
 header("Access-Control-Allow-Origin: *");
