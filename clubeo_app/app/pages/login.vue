@@ -1,17 +1,8 @@
 <template>
   <AuthCard title="Welcome Back!" button="Login" @login="login">
-    <form class="flex flex-col" @submit.prevent>
-
+    <form class="flex flex-col" :class="{ 'shake-animation': isShaking }" @submit.prevent>
       <InputCard v-model="form.email" placeholder="Email" type="email" />
-      <div v-if="isEmailInvalid">
-        <InputWarning :message="errorMessages.email" />
-      </div>
-
       <InputCard v-model="form.password" placeholder="Password" type="password" />
-      <div v-if="isEmailInvalid">
-        <InputWarning :message="errorMessages.email" />
-      </div>
-
     </form>
 
     <p class="text-custom-first_text">
@@ -20,16 +11,33 @@
         Create one here!
       </NuxtLink>
     </p>
-
   </AuthCard>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
 definePageMeta({
   layout: 'auth'
 })
 
 const toast = useToast()
+// Store both userId and token in the cookie for future requests
+const authCookie = useCookie('auth_data', { 
+  secure: true, 
+  sameSite: 'strict',
+  maxAge: 60 * 60 * 24 // 24 hours
+})
+
+const isShaking = ref(false)
+const isLoading = ref(false)
+
+const triggerShake = () => {
+  isShaking.value = true
+  setTimeout(() => {
+    isShaking.value = false
+  }, 400)
+};
 
 const form = ref({
   email: '',
@@ -37,8 +45,20 @@ const form = ref({
 })
 
 const login = async () => {
+  if (isLoading.value) return;
+
+  const emptyFields = !form.value.email || !form.value.password;
+
+  if (emptyFields) {
+    triggerShake();
+    toast.error({ title: 'Error!', message: 'Please fill in all fields!' });
+    return;
+  }
+
+  isLoading.value = true
+
   try {
-    const res = await fetch("/clubeo_php_api/login.php", {
+    const res = await fetch("/clubeo_php_api/auth/login.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -49,14 +69,19 @@ const login = async () => {
       })
     });
 
-    const data = await res.json()
+    const data = await res.json();
 
     if (!res.ok) {
-    toast.error({ title: 'Error!', message: 'Email or password are wrong!' })
+      triggerShake();
+      toast.error({ title: 'Error!', message: data.error || 'Invalid credentials!' })
       return;
     }
 
-    localStorage.setItem('userId', data.user.id)
+    // Save both the ID (for UI) and the Token (for Security/API calls)
+    authCookie.value = {
+      userId: data.userId,
+      token: data.token
+    }
 
     toast.success({ title: 'Success!', message: 'Login successful!' })
     navigateTo('/')
@@ -64,29 +89,18 @@ const login = async () => {
   } catch (error) {
     console.error(error);
     toast.error({ title: 'Error!', message: 'Connection error!' })
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
 
 <style scoped>
 @keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0)
-  }
-
-  20%,
-  60% {
-    transform: translateX(-5px)
-  }
-
-  40%,
-  80% {
-    transform: translateX(5px)
-  }
+  0%, 100% { transform: translateX(0) }
+  20%, 60% { transform: translateX(-5px) }
+  40%, 80% { transform: translateX(5px) }
 }
-
 .shake-animation {
   animation: shake 0.4s ease-in-out
 }

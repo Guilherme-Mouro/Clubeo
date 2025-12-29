@@ -44,8 +44,15 @@ definePageMeta({
 })
 
 const toast = useToast()
-
 const isShaking = ref(false);
+const isLoading = ref(false)
+
+// Define the auth cookie to store session data
+const authCookie = useCookie('auth_data', { 
+  secure: true, 
+  sameSite: 'strict',
+  maxAge: 60 * 60 * 24 // 24 hours
+})
 
 const triggerShake = () => {
   isShaking.value = true
@@ -70,6 +77,7 @@ const serverErrors = ref({
 watch(() => form.value.username, () => { serverErrors.value.username = '' })
 watch(() => form.value.email, () => { serverErrors.value.email = '' })
 
+// Logic for the error messages
 const errorMessages = computed(() => {
   return {
     username: (form.value.username.length > 0 && form.value.username.length < 3)
@@ -96,13 +104,16 @@ const isPasswordInvalid = computed(() => errorMessages.value.password !== '')
 const isConfirmPassInvalid = computed(() => errorMessages.value.confirmPass !== '')
 
 const register = async () => {
+  if (isLoading.value) return
+
   const emptyFields = !form.value.username || !form.value.email || !form.value.password;
-  
+
   if (emptyFields) {
     triggerShake();
     toast.error({ title: 'Error!', message: 'Please fill in all fields!' });
     return;
   }
+
   const hasErrors = isUsernameInvalid.value || isEmailInvalid.value || isPasswordInvalid.value || isConfirmPassInvalid.value
 
   if (hasErrors) {
@@ -110,8 +121,10 @@ const register = async () => {
     return
   }
 
+  isLoading.value = true
+
   try {
-    const res = await fetch("/clubeo_php_api/register.php", {
+    const res = await fetch("/clubeo_php_api/auth/register.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -135,8 +148,13 @@ const register = async () => {
       return;
     }
 
+    // Save both the ID (for UI) and the Token (for Security/API calls)
+    authCookie.value = {
+      userId: data.userId,
+      token: data.token
+    }
+
     toast.success({ title: 'Success!', message: 'Account created successfully!' })
-    localStorage.setItem('userId', data.userId)
     navigateTo('/');
 
   } catch (error) {
