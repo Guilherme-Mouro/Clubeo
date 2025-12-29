@@ -17,6 +17,9 @@ export default {
           second_text: 'var(--second_text)',
           highlight: 'var(--highlight)',
           corners: 'var(--corners)',
+          error: 'var(--error)',
+          warning: 'var(--warning)',
+          success: 'var(--success)'
         }
       },
     },

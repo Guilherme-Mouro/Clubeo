@@ -17,11 +17,33 @@ try {
 
     $username = $data['username'];
     $email = $data['email'];
+
+    $stmtCheck = $pdo->prepare("SELECT username, email FROM users WHERE username = :username OR email = :email");
+    $stmtCheck->execute(['username' => $username, 'email' => $email]);
+    $existingUsers = $stmtCheck->fetchAll(PDO::FETCH_ASSOC);
+
+    if (count($existingUsers) > 0) {
+        $usernameTaken = false;
+        $emailTaken = false;
+
+        foreach ($existingUsers as $user) {
+            if ($user['username'] === $username) $usernameTaken = true;
+            if ($user['email'] === $email) $emailTaken = true;
+        }
+
+        http_response_code(409);
+        echo json_encode([
+            "usernameTaken" => $usernameTaken,
+            "emailTaken" => $emailTaken,
+            "error" => "User or Email already exists"
+        ]);
+        exit;
+    }
+
     $password = password_hash($data['password'], PASSWORD_BCRYPT);
 
-    $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
-    
-    $stmt->execute([
+    $stmtInsert = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
+    $stmtInsert->execute([
         'username' => $username,
         'email' => $email,
         'password' => $password
@@ -32,6 +54,5 @@ try {
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(["error" => "Server error: " . $e->getMessage()]);
+    echo json_encode(["error" => "Database error: " . $e->getMessage()]);
 }
-?>
