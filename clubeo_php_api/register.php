@@ -49,8 +49,13 @@ try {
         'password' => $password
     ]);
 
+    $userId = $pdo->lastInsertId();
+
     http_response_code(201);
-    echo json_encode(["message" => "Account created successfully"]);
+    echo json_encode([
+        "message" => "Account created successfully",
+        "userId"=> $userId
+    ]);
 
 } catch (PDOException $e) {
     http_response_code(500);

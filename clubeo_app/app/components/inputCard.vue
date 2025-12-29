@@ -1,8 +1,8 @@
 <template>
     <div class="relative flex items-center mb-3">
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <XCircleIcon v-if="modelValue && hasError" class="w-5 h-5 text-custom-error" />
-            <CheckCircleIcon v-if="modelValue && !hasError" class="w-5 h-5 text-custom-success" />
+            <XCircleIcon v-if="modelValue && hasError === true" class="w-5 h-5 text-custom-error" />
+            <CheckCircleIcon v-if="modelValue && hasError === false" class="w-5 h-5 text-custom-success" />
         </div>
 
         <input :type="type" :placeholder="placeholder" :value="modelValue"
@@ -20,7 +20,7 @@ defineProps({
     placeholder: String,
     hasError: {
         type: Boolean,
-        default: false
+        default: null
     },
     type: {
         type: String,
@@ -29,10 +29,4 @@ defineProps({
 })
 
 defineEmits(['update:modelValue', 'change'])
-
-const handleInput = (event) => {
-    const value = event.target.value
-    emit('update:modelValue', value)
-    emit('change', value)
-}
 </script>

@@ -136,6 +136,7 @@ const register = async () => {
     }
 
     toast.success({ title: 'Success!', message: 'Account created successfully!' })
+    localStorage.setItem('userId', data.userId)
     navigateTo('/');
 
   } catch (error) {
