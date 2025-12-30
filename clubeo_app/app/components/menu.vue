@@ -68,6 +68,8 @@
 import { BellAlertIcon, HomeIcon, RocketLaunchIcon } from '@heroicons/vue/16/solid'
 import { ref, onMounted, onUnmounted } from 'vue'
 
+const authCookie = useCookie('auth_data')
+
 const user = ref({
     id: null,
     username: '',
@@ -75,37 +77,31 @@ const user = ref({
     clubs: []
 })
 
-const updateOnlineStatus = (status) => {
-    const userId = user.value?.id || localStorage.getItem('userId');
-    if (!userId) return;
-
-    const url = '/clubeo_php_api/updateUserStatus.php';
-    const payload = JSON.stringify({ id: userId, status: status });
-
-    if (status === 0 && navigator.sendBeacon) {
-        const blob = new Blob([payload], { type: 'application/json' });
-        navigator.sendBeacon(url, blob);
-    } else {
-        fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-        }).catch(err => console.error("Erro ao atualizar status:", err));
+const fetchUserData = async () => {
+    if (!authCookie.value?.userId || !authCookie.value?.token) {
+        console.error("Sessão não encontrada")
+        navigateTo('/login')
+        return;
     }
-}
 
-const fetchUserData = async (userId) => {
     try {
         const res = await fetch(`/clubeo_php_api/getUser.php`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: userId })
+            body: JSON.stringify({
+                id: authCookie.value.userId,
+                token: authCookie.value.token
+            })
         });
+
         const data = await res.json()
         if (res.ok) {
             user.value = { ...user.value, ...data.user };
-            updateOnlineStatus(1);
+        } else {
+            authCookie.value = null
+            navigateTo('/login')
         }
+
     } catch (error) {
         console.error("Connection error")
     }
@@ -139,27 +135,21 @@ const goToClub = (id) => {
 const handleTabClose = () => updateOnlineStatus(0);
 
 onMounted(async () => {
-    const storedId = localStorage.getItem('userId')
-    if (storedId) {
-        await fetchUserData(storedId)
-        await fetchUserClubs(storedId)
+    if (authCookie.value) {
+        await fetchUserData()
+        await fetchUserClubs(authCookie.value.userId)
     } else {
-        //navigateTo('/login')
+        navigateTo('/login')
 
-        user.value = {
-            id: 1,
-            username: 'Admin',
-            online: 1,
-            clubs: []
-        }
+        // user.value = {
+        //     id: 1,
+        //     username: 'Admin',
+        //     online: 1,
+        //     clubs: []
+        // }
     }
-
-    window.addEventListener('beforeunload', handleTabClose);
 })
 
-onUnmounted(() => {
-    window.removeEventListener('beforeunload', handleTabClose);
-})
 </script>
 
 <style scoped>

@@ -1,10 +1,7 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 // CORS and Security Headers
 $allowed_origin = "https://guimou.antrob.eu/login";
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: $allowed_origin");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
