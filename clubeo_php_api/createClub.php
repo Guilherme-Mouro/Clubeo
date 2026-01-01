@@ -18,19 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require 'db.php';
-require 'authToken.php'; // O teu ficheiro de verificação
+// Required file to verify user token
+require 'authToken.php';
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Method not allowed", 405);
     }
 
-    // 1. VERIFICAÇÃO DE SEGURANÇA
-    // A função requireAuth verifica o token no Header e devolve o ID do utilizador
-    // Se o token for inválido, a função mata o script aqui com erro 401.
     $userId = requireAuth($pdo);
 
-    // 2. OBTER DADOS DO CORPO DA REQUISIÇÃO (JSON)
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
 
@@ -39,12 +36,10 @@ try {
     }
 
     $name = $data['name'];
-    $description = $data['description'] ?? ''; // Caso não enviem descrição
+    $description = $data['description'] ?? '';
 
-    // 3. OPERAÇÃO NA BASE DE DADOS
     $pdo->beginTransaction();
 
-    // Inserir o novo clube usando o $userId validado pelo token
     $stmt = $pdo->prepare("INSERT INTO clubs (name, description, admin_id, members_num) VALUES (:name, :description, :adminId, 1)");
     $stmt->execute([
         'name' => $name,
@@ -54,7 +49,6 @@ try {
 
     $clubId = $pdo->lastInsertId();
 
-    // Inserir o criador como o primeiro membro (admin)
     $stmt = $pdo->prepare("INSERT INTO club_members (club_id, user_id, role) VALUES (:clubId, :userId, 'admin')");
     $stmt->execute([
         'clubId' => $clubId,
@@ -63,7 +57,6 @@ try {
 
     $pdo->commit();
 
-    // 4. RESPOSTA DE SUCESSO
     http_response_code(201);
     echo json_encode([
         "message" => "Club created and admin assigned", 
@@ -75,7 +68,6 @@ try {
         $pdo->rollBack();
     }
     
-    // Define o código de erro (se for 401 do auth, mantém 401)
     $code = ($e->getCode() >= 400 && $e->getCode() <= 500) ? $e->getCode() : 500;
     http_response_code($code);
     echo json_encode(["error" => $e->getMessage()]);
