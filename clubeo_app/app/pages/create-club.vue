@@ -12,7 +12,14 @@ const form = ref({
   description: '',
 })
 
+const authCookie = useCookie('auth_data')
+
 const createClub = async () => {
+  if (!authCookie.value?.token) {
+    alert("Tens de estar ligado para criar um clube!");
+    return navigateTo('/login');
+  }
+
   try {
     const res = await fetch("/clubeo_php_api/createClub.php", {
       method: "POST",
@@ -22,17 +29,17 @@ const createClub = async () => {
       body: JSON.stringify({
         name: form.value.name,
         description: form.value.description,
-        adminId: localStorage.getItem('userId'),
+        adminToken: authCookie.value.token
       })
     });
 
     const data = await res.json()
 
-    navigateTo('/discover')
-
-    if (!res.ok) {
+    if (res.ok) {
+      alert("Clube criado com sucesso!")
+      navigateTo('/discover')
+    } else {
       alert(data.error || "Error creating club")
-      return;
     }
 
   } catch (error) {
