@@ -37,7 +37,7 @@ try {
 
     $id = $data['id'];
     $token = $data['token'];
-    $status = (int)$data['status']; // Force cast to integer (0 or 1)
+    $status = (int) $data['status']; // Force cast to integer (0 or 1)
 
     // The query verifies both ID and TOKEN simultaneously. 
     // If the token is incorrect or does not match the ID, no rows will be updated.
@@ -47,26 +47,25 @@ try {
             last_seen = NOW() 
         WHERE id = :id AND session_token = :token
     ");
-    
-    $stmt->execute([
+
+    $success = $stmt->execute([
         'status' => $status,
-        'id'     => $id,
-        'token'  => $token
+        'id' => $id,
+        'token' => $token
     ]);
 
     // Check if any row was actually affected by the query
-    if ($stmt->rowCount() > 0) {
-        echo json_encode(["message" => "Status updated successfully", "status" => $status]);
+    if ($success) {
+        echo json_encode(["message" => "Status updated", "status" => $status]);
     } else {
-        // If rowCount is 0, either the token is invalid or the status was already set to that value
-        http_response_code(401);
-        echo json_encode(["error" => "Unauthorized or no changes made"]);
+        http_response_code(500);
+        echo json_encode(["error" => "Database error"]);
     }
 
 } catch (Exception $e) {
     // Log the error message internally for debugging
     error_log("UpdateStatus Error: " . $e->getMessage());
-    
+
     http_response_code(500);
     echo json_encode(["error" => "Internal server error"]);
 }

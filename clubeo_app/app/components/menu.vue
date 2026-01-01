@@ -87,6 +87,8 @@ const user = ref({
 const updateOnlineStatus = (status) => {
     if (!authCookie.value?.userId || !authCookie.value?.token) return;
 
+    user.value.online = status;
+
     const url = '/clubeo_php_api/updateUserStatus.php';
     const payload = JSON.stringify({
         id: authCookie.value.userId,
@@ -180,8 +182,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-    // Set status to offline when component is destroyed (e.g., Logout or Route change)
-    updateOnlineStatus(0);
     window.removeEventListener('beforeunload', handleTabClose);
 })
 </script>
