@@ -24,12 +24,12 @@ const createClub = async () => {
     const res = await fetch("/clubeo_php_api/createClub.php", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${authCookie.value.token}`
       },
       body: JSON.stringify({
         name: form.value.name,
         description: form.value.description,
-        adminToken: authCookie.value.token
       })
     });
 
