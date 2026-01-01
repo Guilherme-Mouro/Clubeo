@@ -71,6 +71,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 // Get session data from cookie
 const authCookie = useCookie('auth_data')
 
+const toast = useToast()
+
 const user = ref({
     id: null,
     username: '',
@@ -135,7 +137,7 @@ const fetchUserData = async () => {
             navigateTo('/login');
         }
     } catch (error) {
-        console.error("Connection error while fetching user data");
+        toast.error({ title: 'Error!', message: 'Connection error while fetching user data!' });
     }
 }
 
@@ -154,7 +156,7 @@ const fetchUserClubs = async (userId) => {
             user.value.clubs = data;
         }
     } catch (error) {
-        console.error("Connection error while fetching clubs");
+        toast.error({ title: 'Error!', message: 'Connection error while fetching clubs!' });
     }
 }
 
@@ -169,7 +171,7 @@ onMounted(async () => {
     if (authCookie.value?.userId) {
         await fetchUserData();
         await fetchUserClubs(authCookie.value.userId);
-        
+
         // Listen for page unload/close events
         window.addEventListener('beforeunload', handleTabClose);
     } else {
