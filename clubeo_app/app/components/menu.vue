@@ -41,7 +41,7 @@
 
         <div class="mt-auto mb-10">
             <SwitchColorMode class="mb-3" />
-            <NuxtLink v-if="user" :to="`/${user.id}/profile`">
+            <NuxtLink v-if="user.id" :to="`/${user.id}/profile`">
                 <div class="profile">
                     <div class="mr-3">
                         <Avatar />
@@ -68,6 +68,7 @@
 import { BellAlertIcon, HomeIcon, RocketLaunchIcon } from '@heroicons/vue/16/solid'
 import { ref, onMounted, onUnmounted } from 'vue'
 
+// Get session data from cookie
 const authCookie = useCookie('auth_data')
 
 const user = ref({
@@ -77,10 +78,40 @@ const user = ref({
     clubs: []
 })
 
+/**
+ * Updates the user's online status in the database
+ * @param {number} status - 1 for Online, 0 for Offline
+ */
+const updateOnlineStatus = (status) => {
+    if (!authCookie.value?.userId || !authCookie.value?.token) return;
+
+    const url = '/clubeo_php_api/updateUserStatus.php';
+    const payload = JSON.stringify({
+        id: authCookie.value.userId,
+        token: authCookie.value.token,
+        status: status
+    });
+
+    if (status === 0 && navigator.sendBeacon) {
+        // Use sendBeacon for reliable delivery during page unload
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon(url, blob);
+    } else {
+        // Use standard fetch for logging in/active changes
+        fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: payload
+        }).catch(err => console.error("Status update failed:", err));
+    }
+}
+
+/**
+ * Fetches core user profile data
+ */
 const fetchUserData = async () => {
     if (!authCookie.value?.userId || !authCookie.value?.token) {
-        console.error("Sessão não encontrada")
-        navigateTo('/login')
+        navigateTo('/login');
         return;
     }
 
@@ -94,19 +125,22 @@ const fetchUserData = async () => {
             })
         });
 
-        const data = await res.json()
+        const data = await res.json();
         if (res.ok) {
             user.value = { ...user.value, ...data.user };
+            // Mark as online once data is successfully loaded
+            updateOnlineStatus(1);
         } else {
-            authCookie.value = null
-            navigateTo('/login')
+            authCookie.value = null;
+            navigateTo('/login');
         }
-
     } catch (error) {
-        console.error("Connection error")
+        console.error("Connection error while fetching user data");
     }
 }
 
+
+//  Fetches the list of clubs the user belongs to
 const fetchUserClubs = async (userId) => {
     try {
         const res = await fetch(`/clubeo_php_api/getUserClubs.php`, {
@@ -115,16 +149,12 @@ const fetchUserClubs = async (userId) => {
             body: JSON.stringify({ userId: userId })
         });
 
-        const data = await res.json()
-
+        const data = await res.json();
         if (res.ok) {
             user.value.clubs = data;
-        } else {
-            console.error(data.error)
         }
-
     } catch (error) {
-        console.error("Connection error")
+        console.error("Connection error while fetching clubs");
     }
 }
 
@@ -132,24 +162,26 @@ const goToClub = (id) => {
     navigateTo(`/club/${id}`)
 }
 
+// Handler for browser tab close or refresh
 const handleTabClose = () => updateOnlineStatus(0);
 
 onMounted(async () => {
-    if (authCookie.value) {
-        await fetchUserData()
-        await fetchUserClubs(authCookie.value.userId)
+    if (authCookie.value?.userId) {
+        await fetchUserData();
+        await fetchUserClubs(authCookie.value.userId);
+        
+        // Listen for page unload/close events
+        window.addEventListener('beforeunload', handleTabClose);
     } else {
-        navigateTo('/login')
-
-        // user.value = {
-        //     id: 1,
-        //     username: 'Admin',
-        //     online: 1,
-        //     clubs: []
-        // }
+        navigateTo('/login');
     }
 })
 
+onUnmounted(() => {
+    // Set status to offline when component is destroyed (e.g., Logout or Route change)
+    updateOnlineStatus(0);
+    window.removeEventListener('beforeunload', handleTabClose);
+})
 </script>
 
 <style scoped>
