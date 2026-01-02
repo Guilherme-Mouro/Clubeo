@@ -32,7 +32,7 @@ try {
     $data = json_decode($input, true);
 
     if (empty($data['name'])) {
-        throw new Exception("O nome do clube é obrigatório", 400);
+        throw new Exception("Club name is required", 400);
     }
 
     $name = $data['name'];
@@ -40,10 +40,11 @@ try {
 
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("INSERT INTO clubs (name, description, admin_id, members_num) VALUES (:name, :description, :adminId, 1)");
+    $stmt = $pdo->prepare("INSERT INTO clubs (name, description, image_banner, admin_id, members_num) VALUES (:name, :description, :imageUrl, :adminId, 1)");
     $stmt->execute([
         'name' => $name,
         'description' => $description,
+        'imageUrl' => $imageUrl,
         'adminId' => $userId
     ]);
 

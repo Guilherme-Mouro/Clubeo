@@ -41,10 +41,10 @@
 
         <div class="mt-auto mb-10">
             <SwitchColorMode class="mb-3" />
-            <NuxtLink v-if="user.id" :to="`/${user.id}/profile`">
+            <NuxtLink  :to="`/${user.id}/profile`">
                 <div class="profile">
                     <div class="mr-3">
-                        <Avatar />
+                        <Avatar class="w-12 h-12" :image="user.avatar_url"/>
                     </div>
                     <div class="flex flex-col">
                         <p class="text-custom-first_text"><strong>{{ user.username }}</strong></p>
@@ -76,6 +76,7 @@ const toast = useToast()
 const user = ref({
     id: null,
     username: '',
+    avatar_url: '',
     online: 0,
     clubs: []
 })

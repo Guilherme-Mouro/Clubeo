@@ -1,8 +1,22 @@
 <template>
-  <div class="flex flex-col">
-    <InputCard v-model="form.name" placeholder="Club name" />
-    <InputCard v-model="form.description" placeholder="Description" />
-    <button class="bg-custom-highlight text-white font-bold rounded-lg p-2" @click="createClub">Create</button>
+  <div class="flex flex-row items-center">
+
+    <div class="flex flex-col items-center gap-4">
+      <div class="relative group cursor-pointer" @click="$refs.fileInput.click()">
+        <Avatar class="w-48 h-48" :image="previewUrl"/>
+        <div
+          class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <span class="text-white font-bold text-sm">Change Photo</span>
+        </div>
+      </div>
+      <input type="file" ref="fileInput" class="hidden" @change="onFileSelected" accept="image/*" />
+    </div>
+
+    <div class="flex flex-col">
+      <InputCard v-model="form.name" placeholder="Club name" />
+      <InputCard v-model="form.description" placeholder="Description" />
+      <button class="bg-custom-highlight text-white font-bold rounded-lg p-2" @click="createClub">Create</button>
+    </div>
   </div>
 </template>
 
@@ -13,6 +27,17 @@ const form = ref({
 })
 
 const authCookie = useCookie('auth_data')
+
+const selectedFile = ref(null)
+const previewUrl = ref(null)
+
+const onFileSelected = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    selectedFile.value = file
+    previewUrl.value = URL.createObjectURL(file)
+  }
+}
 
 const createClub = async () => {
   if (!authCookie.value?.token) {
@@ -30,6 +55,7 @@ const createClub = async () => {
       body: JSON.stringify({
         name: form.value.name,
         description: form.value.description,
+        imgUrl: previewUrl.value
       })
     });
 

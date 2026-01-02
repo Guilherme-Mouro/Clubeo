@@ -1,11 +1,10 @@
 <template>
   <div class="max-w-2xl mx-auto p-6 space-y-6">
-    <h2 class="text-2xl font-bold text-custom-highlight">Edit Profile</h2>
+    <h2 class="text-2xl font-bold text-custom-highlight text-4xl">Profile</h2>
 
     <div class="flex flex-col items-center gap-4">
       <div class="relative group cursor-pointer" @click="$refs.fileInput.click()">
-        <img :src="user.avatar_url || 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'"
-          class="w-32 h-32 rounded-full object-cover border-4 border-custom-highlight shadow-lg" />
+        <Avatar class="w-32 h-32" :image="user.avatar_url"/>
         <div
           class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <span class="text-white font-bold text-sm">Change Photo</span>
@@ -100,15 +99,15 @@ const onFileSelected = (event) => {
 const uploadToCloudinary = async () => {
   const formData = new FormData()
   formData.append('file', selectedFile.value)
-  formData.append('upload_preset', 'clubeo_preset') 
+  formData.append('upload_preset', 'clubeo_preset')
 
   const res = await fetch('https://api.cloudinary.com/v1_1/dk4s1jyeo/image/upload', {
     method: 'POST',
     body: formData
   })
-  
+
   if (!res.ok) throw new Error("Erro no upload para o Cloudinary");
-  
+
   const data = await res.json()
   return data.secure_url
 }
@@ -144,7 +143,7 @@ const updateUserData = async () => {
     if (res.ok) {
       toast.success({ title: 'Success', message: 'Profile updated!' })
       user.value.password = ''
-      selectedFile.value = null 
+      selectedFile.value = null
     } else {
       toast.error({ title: 'Error!', message: data.error || 'Update failed' });
     }
