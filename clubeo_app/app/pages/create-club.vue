@@ -3,7 +3,7 @@
 
     <div class="flex flex-col items-center gap-4">
       <div class="relative group cursor-pointer" @click="$refs.fileInput.click()">
-        <Avatar class="w-48 h-48" :image="previewUrl"/>
+        <Avatar class="w-48 h-48" :image="previewUrl" />
         <div
           class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <span class="text-white font-bold text-sm">Change Photo</span>
@@ -39,6 +39,22 @@ const onFileSelected = (event) => {
   }
 }
 
+const uploadToCloudinary = async () => {
+  const formData = new FormData()
+  formData.append('file', selectedFile.value)
+  formData.append('upload_preset', 'clubeo_preset')
+
+  const res = await fetch('https://api.cloudinary.com/v1_1/dk4s1jyeo/image/upload', {
+    method: 'POST',
+    body: formData
+  })
+
+  if (!res.ok) throw new Error("Erro no upload para o Cloudinary");
+
+  const data = await res.json()
+  return data.secure_url
+}
+
 const createClub = async () => {
   if (!authCookie.value?.token) {
     alert("Tens de estar ligado para criar um clube!");
@@ -46,6 +62,10 @@ const createClub = async () => {
   }
 
   try {
+    if (selectedFile.value) {
+      finalImageUrl = await uploadToCloudinary()
+    }
+
     const res = await fetch("/clubeo_php_api/createClub.php", {
       method: "POST",
       headers: {
@@ -55,7 +75,7 @@ const createClub = async () => {
       body: JSON.stringify({
         name: form.value.name,
         description: form.value.description,
-        imgUrl: previewUrl.value
+        imgUrl: finalImageUrl
       })
     });
 
