@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row items-center bg-custom-cards_menu rounded-lg p-2 mb-5 hover:bg-custom-corners">
-        <Avatar />
+        <Avatar class="w-24 h-24" :image="image"/>
         <div class="flex flex-col ml-4">
             <h3 class="text-custom-highlight font-bold text-3xl">{{ name }}</h3>
             <div class="flex flex-wrap items-center gap-2 text-custom-first_text opacity-90">
@@ -13,5 +13,5 @@
 </template>
 
 <script setup>
-defineProps(['name', 'members', 'description'])
+defineProps(['name', 'members', 'description', 'image'])
 </script>

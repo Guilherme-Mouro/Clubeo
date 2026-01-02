@@ -6,7 +6,7 @@
     </div>
 
     <div v-for="club in filteredClubs" :key="club.id" @click="goToClub(club.id)">
-        <ClubCard :name="club.name" :members="club.members_num" :description="club.description"/>
+        <ClubCard :name="club.name" :members="club.members_num" :description="club.description" :image="club.image_banner"/>
     </div>
 
 </template>

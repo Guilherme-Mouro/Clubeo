@@ -5,7 +5,7 @@
 
             <div class="flex flex-row items-center gap-5">
                 <div class="shrink-0">
-                    <Avatar />
+                    <Avatar class="w-48 h-48" :image="club.image_banner" />
                 </div>
 
                 <div class="flex flex-col gap-1">

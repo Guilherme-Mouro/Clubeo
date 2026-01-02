@@ -4,7 +4,7 @@
 
     <div class="flex flex-col items-center gap-4">
       <div class="relative group cursor-pointer" @click="$refs.fileInput.click()">
-        <Avatar class="w-32 h-32" :image="user.avatar_url"/>
+        <Avatar class="w-48 h-48" :image="user.avatar_url"/>
         <div
           class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <span class="text-white font-bold text-sm">Change Photo</span>
