@@ -32,7 +32,7 @@ try {
     $id = $data['id'];
     $token = $data['token'];
 
-    $stmt = $pdo->prepare("SELECT id, username, email FROM users WHERE id = :id AND session_token = :token LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, username, email, password, description, avatar_url FROM users WHERE id = :id AND session_token = :token LIMIT 1");
     $stmt->execute([
         'id' => $id,
         'token'=> $token
