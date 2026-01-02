@@ -62,6 +62,8 @@ const createClub = async () => {
   }
 
   try {
+    let finalImageUrl = '';
+
     if (selectedFile.value) {
       finalImageUrl = await uploadToCloudinary()
     }
@@ -75,7 +77,7 @@ const createClub = async () => {
       body: JSON.stringify({
         name: form.value.name,
         description: form.value.description,
-        imgUrl: finalImageUrl
+        imageUrl: finalImageUrl
       })
     });
 

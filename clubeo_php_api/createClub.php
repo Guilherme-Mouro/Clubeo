@@ -37,6 +37,7 @@ try {
 
     $name = $data['name'];
     $description = $data['description'] ?? '';
+    $imageUrl = $data['imageUrl'] ?? '';
 
     $pdo->beginTransaction();
 
