@@ -13,16 +13,25 @@ const route = useRoute()
 const clubId = route.query.clubId
 const content = ref('')
 
+const authCookie = useCookie('auth_data')
+
+
 const createPost = async () => {
+    if (!authCookie.value?.token) {
+        alert("Tens de estar ligado para criar um clube!");
+        return navigateTo('/login');
+    }
+
     try {
         const res = await fetch("/clubeo_php_api/createPost.php", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authCookie.value.token}`
+
             },
             body: JSON.stringify({
                 clubId: clubId,
-                userId: localStorage.getItem('userId'),
                 content: content.value,
             })
         });
