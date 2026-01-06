@@ -111,9 +111,6 @@ const updateOnlineStatus = (status) => {
     }
 }
 
-/**
- * Fetches core user profile data
- */
 const fetchUserData = async () => {
     try {
         const res = await fetch(`/clubeo_php_api/getUser.php`, {

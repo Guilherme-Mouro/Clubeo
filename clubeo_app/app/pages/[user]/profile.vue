@@ -4,7 +4,7 @@
 
     <div class="flex flex-col items-center gap-4">
       <div class="relative group cursor-pointer" @click="$refs.fileInput.click()">
-        <Avatar class="w-48 h-48" :image="user.avatar_url"/>
+        <Avatar class="w-48 h-48" :image="user.avatar_url" />
         <div
           class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <span class="text-white font-bold text-sm">Change Photo</span>
@@ -61,19 +61,13 @@ const user = ref({
 })
 
 const fetchUserData = async () => {
-  if (!authCookie.value?.userId || !authCookie.value?.token) {
-    navigateTo('/login');
-    return;
-  }
-
   try {
     const res = await fetch(`/clubeo_php_api/getUser.php`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: authCookie.value.userId,
-        token: authCookie.value.token
-      })
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${authCookie.value.token}`
+      },
     });
 
     const data = await res.json();
@@ -160,7 +154,7 @@ onMounted(async () => {
   if (authCookie.value?.userId) {
     await fetchUserData();
   } else {
-      navigateTo('/login');
+    navigateTo('/login');
   }
 })
 </script>
