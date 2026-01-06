@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require 'db.php';
-
+require 'authToken.php';
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -29,7 +29,7 @@ try {
 
     $stmt = $pdo->prepare("SELECT id, username, email, password, description, avatar_url FROM users WHERE id = :userId LIMIT 1");
     $stmt->execute([
-        'id' => $userId,
+        'userId' => $userId,
     ]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

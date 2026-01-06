@@ -115,7 +115,7 @@ const updateOnlineStatus = (status) => {
  * Fetches core user profile data
  */
 const fetchUserData = async () => {
-    if (!authCookie.value?.userId || !authCookie.value?.token) {
+if (!token.value) {
         navigateTo('/login');
         return;
     }
@@ -140,6 +140,7 @@ const fetchUserData = async () => {
         }
     } catch (error) {
         toast.error({ title: 'Error!', message: 'Connection error while fetching user data!' });
+        navigateTo('/login')
     }
 }
 
