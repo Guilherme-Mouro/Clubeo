@@ -21,21 +21,15 @@ require 'db.php';
 
 
 try {
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    if (empty($data['id']) || empty(trim($data['token']))) {
-        http_response_code(400);
-        echo json_encode(["error" => "User ID and Token is required"]);
-        exit;
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("Method not allowed", 405);
     }
 
-    $id = $data['id'];
-    $token = $data['token'];
+    $userId = requireAuth($pdo);
 
-    $stmt = $pdo->prepare("SELECT id, username, email, password, description, avatar_url FROM users WHERE id = :id AND session_token = :token LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, username, email, password, description, avatar_url FROM users WHERE id = :userId LIMIT 1");
     $stmt->execute([
-        'id' => $id,
-        'token'=> $token
+        'id' => $userId,
     ]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

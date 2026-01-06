@@ -16,16 +16,20 @@
 .main-container {
   display: flex;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
-  width: 300px;         
+  width: 300px;
+  height: 100%;      
   flex-shrink: 0;         
-  padding: 20px;
+  overflow-y: auto;
 }
 
 .content {
+  height: 100%;
+  overflow-y: auto;
   flex-grow: 1;           
   padding: 50px;
 }

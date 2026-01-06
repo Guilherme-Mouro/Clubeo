@@ -160,7 +160,7 @@ onMounted(async () => {
   if (authCookie.value?.userId) {
     await fetchUserData();
   } else {
-    navigateTo('/login');
+      navigateTo('/login');
   }
 })
 </script>

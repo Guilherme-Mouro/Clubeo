@@ -1,7 +1,6 @@
 <template>
     <header v-if="club">
-        <div
-            class="flex flex-col md:flex-row md:items-center md:justify-between bg-custom-cards_menu rounded-xl p-8 gap-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between bg-custom-cards_menu rounded-xl p-8 gap-6">
 
             <div class="flex flex-row items-center gap-5">
                 <div class="shrink-0">
@@ -34,7 +33,7 @@
     </header>
     <div v-else class="text-custom-first_text font-bold">Loading...</div>
 
-    <div>
+    <div v-if="isMember">
         <button class="bg-custom-highlight text-white font-bold rounded-lg p-2" @click="toPost">Post
             +</button>
     </div>
@@ -42,11 +41,11 @@
     <div v-for="post in posts" :key="post.id"
         class="flex flex-col mt-6 shadow-xl rounded-xl overflow-hidden border border-white/5">
         <div class="flex flex-row items-center bg-custom-highlight p-3">
-            <div class="shrink-0 border-2 border-white/20 rounded-full overflow-hidden">
-                <Avatar />
+            <div class="shrink-0 border-2 border-white/20 rounded-full overflow-hidden w-10 h-10">
+                <Avatar :image="post.avatar_url" class="w-full h-full object-cover" />
             </div>
             <div class="flex flex-col ml-3">
-                <h4 class="font-bold text-white text-lg leading-tight">Mouro</h4>
+                <h4 class="font-bold text-white text-lg leading-tight">{{ post.username }}</h4>
                 <h6 class="text-white/70 text-xs">{{ post.created_at }}</h6>
             </div>
         </div>
@@ -85,16 +84,16 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const authCookie = useCookie('auth_data')
-const userId = authCookie.value?.id
-
 const toast = useToast()
 const route = useRoute()
 
-const club = ref(null)
 const posts = ref([])
+const club = ref(null)
 const userClubs = ref([])
 
 const clubIdFromRoute = route.params.id
+
+const userId = computed(() => authCookie.value?.user?.id || null)
 
 const isMember = computed(() => {
     if (!userClubs.value || userClubs.value.length === 0) return false;
@@ -114,23 +113,33 @@ const fetchClubDetails = async () => {
         const data = await res.json()
         if (res.ok) club.value = data
     } catch (error) {
-        console.error(error)
+        toast.error({ title: 'Error!', message: 'Connection error!' })
     }
 }
 
 const fetchPosts = async () => {
     try {
-        const res = await fetch(`/clubeo_php_api/getPosts.php?id=${clubIdFromRoute}`);
+        const res = await fetch(`/clubeo_php_api/getPosts.php?id=${clubIdFromRoute}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authCookie.value.token}`
+            },
+        });
+
         const data = await res.json()
+
         if (res.ok) {
             posts.value = data
         }
     } catch (error) {
-        console.error(error)
+        toast.error({ title: 'Error!', message: 'Connection error!' })
     }
 }
 
 const fetchUserClubs = async () => {
+    if (!userId.value) return;
+
     try {
         const res = await fetch(`/clubeo_php_api/getUserClubs.php`, {
             method: "POST",
@@ -138,7 +147,7 @@ const fetchUserClubs = async () => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authCookie.value.token}`
             },
-            body: JSON.stringify({ userId: userId })
+            body: JSON.stringify({ userId: userId.value })
         });
 
         const data = await res.json();
@@ -146,11 +155,13 @@ const fetchUserClubs = async () => {
             userClubs.value = data;
         }
     } catch (error) {
-        console.error(error)
+        toast.error({ title: 'Error!', message: 'Connection error!' })
     }
 }
 
 const joinClub = async () => {
+    if (!userId.value) return;
+
     try {
         const res = await fetch(`/clubeo_php_api/insertClubMembers.php`, {
             method: "POST",
@@ -160,7 +171,7 @@ const joinClub = async () => {
             },
             body: JSON.stringify({
                 clubId: clubIdFromRoute,
-                userId: userId
+                userId: userId.value
             })
         });
 
@@ -178,9 +189,11 @@ const likePost = async (postId) => {
     try {
         const res = await fetch(`/clubeo_php_api/likePost.php`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authCookie.value.token}`
+            },
             body: JSON.stringify({
-                userId: userId,
                 postId: postId
             })
         });

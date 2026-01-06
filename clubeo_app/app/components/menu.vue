@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen p-6">
         <div class="p-2">
             <h1 class="text-custom-highlight font-bold text-6xl">Clubeo</h1>
         </div>
@@ -123,11 +123,10 @@ const fetchUserData = async () => {
     try {
         const res = await fetch(`/clubeo_php_api/getUser.php`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                id: authCookie.value.userId,
-                token: authCookie.value.token
-            })
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authCookie.value.token}`
+            },
         });
 
         const data = await res.json();
@@ -160,7 +159,7 @@ const fetchUserClubs = async (userId) => {
         if (res.ok) {
             user.value.clubs = data;
         }
-        
+
     } catch (error) {
         toast.error({ title: 'Error!', message: 'Connection error while fetching clubs!' });
     }
