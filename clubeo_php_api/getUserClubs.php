@@ -1,20 +1,30 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST");
-header("Content-Type: application/json");
+// CORS and Security Headers
+$allowed_origin = "https://guimou.antrob.eu";
+header("Access-Control-Allow-Origin: $allowed_origin");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Content-Type: application/json; charset=UTF-8");
+
+// Security hardening headers
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header("X-XSS-Protection: 1; mode=block");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 
 require 'db.php';
+require 'authToken.php';
 
 try {
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    if (!isset($data["userId"])) {
-        echo json_encode(["error" => "userId não fornecido"]);
-        exit;
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("Method not allowed", 405);
     }
 
-    $userId = $data["userId"];
+    $userId = requireAuth($pdo);
     
     $sql = "SELECT c.id, c.name, c.description, c.image_banner 
         FROM clubs c

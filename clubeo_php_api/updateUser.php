@@ -64,7 +64,7 @@ try {
     $pdo->commit();
 
     http_response_code(200);
-    echo json_encode(["message" => "Perfil atualizado com sucesso"]);
+    echo json_encode(["message" => "Profile updated!"]);
 
 } catch (Exception $e) { 
     if (isset($pdo) && $pdo->inTransaction()) {

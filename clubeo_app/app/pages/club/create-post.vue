@@ -28,7 +28,6 @@ const createPost = async () => {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authCookie.value.token}`
-
             },
             body: JSON.stringify({
                 clubId: clubId,

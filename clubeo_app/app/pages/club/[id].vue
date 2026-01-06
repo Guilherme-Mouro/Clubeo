@@ -21,7 +21,12 @@
                 </div>
             </div>
 
-            <button @click="joinClub"
+            <button v-if="isMember" disabled
+                class="w-full md:w-auto bg-gray-600 text-white/70 font-bold rounded-lg px-8 py-3 cursor-not-allowed border border-white/10">
+                Joined ✓
+            </button>
+
+            <button v-else @click="joinClub"
                 class="w-full md:w-auto bg-custom-highlight hover:opacity-90 text-white font-bold rounded-lg px-8 py-3 transition-all duration-200 shadow-lg">
                 Join Club
             </button>
@@ -33,7 +38,6 @@
         <button class="bg-custom-highlight text-white font-bold rounded-lg p-2" @click="toPost">Post
             +</button>
     </div>
-
 
     <div v-for="post in posts" :key="post.id"
         class="flex flex-col mt-6 shadow-xl rounded-xl overflow-hidden border border-white/5">
@@ -56,7 +60,8 @@
 
             <div class="px-5 py-3 bg-black/20 border-t border-white/5 flex items-center gap-4">
                 <button class="flex items-center gap-2 group transition-all">
-                    <div class="p-2 rounded-full group-hover:bg-red-500/20 transition-colors" @click="likePost(post.id)">
+                    <div class="p-2 rounded-full group-hover:bg-red-500/20 transition-colors"
+                        @click="likePost(post.id)">
                         <svg xmlns="http://www.w3.org/2000/svg"
                             class="h-6 w-6 text-custom-highlight group-hover:text-red-500 transition-colors"
                             fill="currentColor" viewBox="0 0 24 24">
@@ -73,19 +78,28 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
+const authCookie = useCookie('auth_data')
+const userId = authCookie.value?.id
+
+const toast = useToast()
 const route = useRoute()
+
 const club = ref(null)
 const posts = ref([])
-const userId = localStorage.getItem('userId')
+const userClubs = ref([])
 
 const clubIdFromRoute = route.params.id
+
+const isMember = computed(() => {
+    if (!userClubs.value || userClubs.value.length === 0) return false;
+    return userClubs.value.some(c => c.id == clubIdFromRoute);
+})
 
 const toPost = () => {
     navigateTo({
@@ -100,7 +114,7 @@ const fetchClubDetails = async () => {
         const data = await res.json()
         if (res.ok) club.value = data
     } catch (error) {
-        console.error("Erro ao carregar detalhes do clube")
+        console.error(error)
     }
 }
 
@@ -112,7 +126,27 @@ const fetchPosts = async () => {
             posts.value = data
         }
     } catch (error) {
-        console.error("Erro ao carregar posts")
+        console.error(error)
+    }
+}
+
+const fetchUserClubs = async () => {
+    try {
+        const res = await fetch(`/clubeo_php_api/getUserClubs.php`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authCookie.value.token}`
+            },
+            body: JSON.stringify({ userId: userId })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            userClubs.value = data;
+        }
+    } catch (error) {
+        console.error(error)
     }
 }
 
@@ -120,7 +154,10 @@ const joinClub = async () => {
     try {
         const res = await fetch(`/clubeo_php_api/insertClubMembers.php`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authCookie.value.token}`
+            },
             body: JSON.stringify({
                 clubId: clubIdFromRoute,
                 userId: userId
@@ -128,11 +165,12 @@ const joinClub = async () => {
         });
 
         if (res.ok) {
-            alert("You joinned the club!");
-            fetchClubDetails();
+            toast.success({ title: 'Success!', message: 'Joined the club successfully!' })
+            await fetchClubDetails();
+            await fetchUserClubs();
         }
     } catch (error) {
-        console.error("Error connecting to club")
+        toast.error({ title: 'Error!', message: 'Connection error!' })
     }
 }
 
@@ -148,16 +186,16 @@ const likePost = async (postId) => {
         });
 
         if (res.ok) {
-            alert("Sucess!");
             fetchPosts();
         }
     } catch (error) {
-        console.error("Error")
+        console.error(error)
     }
 }
 
 onMounted(() => {
     fetchClubDetails()
     fetchPosts()
+    fetchUserClubs()
 })
 </script>

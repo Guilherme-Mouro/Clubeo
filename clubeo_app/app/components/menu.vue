@@ -34,7 +34,7 @@
             <h4 class="text-custom-second_text mb-2">My Clubs</h4>
             <div class="flex flex-row">
                 <div class="mr-2" v-for="club in user?.clubs" :key="club.id" @click="goToClub(club.id)">
-                    <Avatar class="w-12 h-12" :image="club.image_banner"/>
+                    <Avatar class="w-12 h-12" :image="club.image_banner" />
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
             <NuxtLink v-if="user.id" :to="`/${user.id}/profile`">
                 <div class="profile">
                     <div class="mr-3">
-                        <Avatar class="w-12 h-12" :image="user.avatar_url"/>
+                        <Avatar class="w-12 h-12" :image="user.avatar_url" />
                     </div>
                     <div class="flex flex-col">
                         <p class="text-custom-first_text"><strong>{{ user.username }}</strong></p>
@@ -150,14 +150,17 @@ const fetchUserClubs = async (userId) => {
     try {
         const res = await fetch(`/clubeo_php_api/getUserClubs.php`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: userId })
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authCookie.value.token}`
+            },
         });
 
         const data = await res.json();
         if (res.ok) {
             user.value.clubs = data;
         }
+        
     } catch (error) {
         toast.error({ title: 'Error!', message: 'Connection error while fetching clubs!' });
     }
