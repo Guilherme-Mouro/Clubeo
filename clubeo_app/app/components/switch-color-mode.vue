@@ -44,7 +44,7 @@ const showLabel = ref(false)
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #111827;
+    background-color: #818CF8;
     -webkit-transition: .4s;
     transition: .4s;
 }
