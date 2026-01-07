@@ -171,7 +171,6 @@ const joinClub = async () => {
             },
             body: JSON.stringify({
                 clubId: clubIdFromRoute,
-                userId: userId.value
             })
         });
 

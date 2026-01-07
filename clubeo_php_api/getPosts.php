@@ -25,6 +25,7 @@ try {
     }
 
     $userId = requireAuth($pdo);
+    
     $clubId = isset($_GET['id']) ? intval($_GET['id']) : null;
 
     if (!$clubId) {
@@ -39,7 +40,7 @@ try {
             posts.created_at, 
             posts.likes_num,
             users.username,
-            users.image_profile as user_avatar 
+            users.avatar_url
         FROM posts
         JOIN users ON posts.user_id = users.id
         WHERE posts.club_id = :clubId
@@ -54,6 +55,6 @@ try {
 
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(["error" => "Server error"]);
+    echo json_encode(["error" => "Server error: " . $e->getMessage()]);
 }
 ?>

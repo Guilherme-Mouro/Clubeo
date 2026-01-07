@@ -29,10 +29,6 @@
         <InputCard v-model="user.email" placeholder="Email" type="email" />
       </label>
 
-      <label class="block">
-        <span class="text-custom-first_text font-semibold">New Password</span>
-        <InputCard v-model="user.password" placeholder="Leave blank to keep current" type="password" />
-      </label>
     </div>
 
     <button @click="updateUserData" :disabled="isLoading"
@@ -56,7 +52,6 @@ const user = ref({
   username: '',
   description: '',
   email: '',
-  password: '',
   avatar_url: ''
 })
 
@@ -127,7 +122,6 @@ const updateUserData = async () => {
         username: user.value.username,
         description: user.value.description,
         email: user.value.email,
-        password: user.value.password,
         avatar_url: finalAvatarUrl,
       })
     });
