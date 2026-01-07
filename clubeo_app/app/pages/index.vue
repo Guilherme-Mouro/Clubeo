@@ -1,7 +1,7 @@
 <template>
   <div v-for="post in posts" :key="post.id">
-    <PostCard :id="post.id" :username="post.username" :user_avatar="post.avatar_url" :created_at="post.created_at"
-      :content="post.content" :likes_num="post.likes_num" @likePost="likePost" />
+    <PostCard :username="post.username" :user_avatar="post.avatar_url" :created_at="post.created_at"
+      :content="post.content" :likes_num="post.likes_num" @likePost="likePost(post.id)" />
   </div>
 </template>
 
@@ -28,7 +28,7 @@ const fetchHomePosts = async () => {
     if (res.ok) {
       posts.value = data
     }
-    
+
   } catch (error) {
     toast.error({ title: 'Error!', message: 'Connection error!' })
   }

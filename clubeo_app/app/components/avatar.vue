@@ -7,7 +7,7 @@
     />
     <img 
       v-else 
-      src="https://ui-avatars.com/api/?name=User&background=818CF8&color=fff"
+      src="/default-account-banner.png"
       class="avatar-img" 
     />
   </div>

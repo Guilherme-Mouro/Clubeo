@@ -1,9 +1,7 @@
 <template>
     <div class="flex flex-col mt-6 shadow-xl rounded-xl overflow-hidden border border-white/5">
         <div class="flex flex-row items-center bg-custom-highlight p-3">
-            <div class="shrink-0 border-2 border-white/20 rounded-full overflow-hidden w-10 h-10">
-                <Avatar class="w-12 h-12" :image="user_avatar" />
-            </div>
+            <Avatar class="w-12 h-12" :image="user_avatar" />
             <div class="flex flex-col ml-3">
                 <h4 class="font-bold text-white text-lg leading-tight">{{ username }}</h4>
                 <h6 class="text-white/70 text-xs">{{ created_at }}</h6>
@@ -40,14 +38,13 @@
 </template>
 
 <script setup>
-    defineProps({
-        id: Number,
-        username: String,
-        user_avatar: String,
-        created_at: String,
-        content: String,
-        likes_num: Number,
-    })
+defineProps({
+    username: String,
+    user_avatar: String,
+    created_at: String,
+    content: String,
+    likes_num: Number,
+})
 
-    defineEmits(['likePost'])
+defineEmits(['likePost'])
 </script>
