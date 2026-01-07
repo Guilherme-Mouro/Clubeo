@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <div class="mt-auto mb-10">
+        <div class="mt-auto">
             <SwitchColorMode class="mb-3" />
             <NuxtLink v-if="user.id" :to="`/${user.id}/profile`">
                 <div class="profile">

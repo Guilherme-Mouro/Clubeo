@@ -97,7 +97,8 @@ const userId = computed(() => authCookie.value?.user?.id || null)
 
 const isMember = computed(() => {
     if (!userClubs.value || userClubs.value.length === 0) return false;
-    return userClubs.value.some(c => c.id == clubIdFromRoute);
+    
+    return userClubs.value.some(c => Number(c.id) === Number(clubIdFromRoute));
 })
 
 const toPost = () => {
@@ -113,7 +114,7 @@ const fetchClubDetails = async () => {
         const data = await res.json()
         if (res.ok) club.value = data
     } catch (error) {
-        toast.error({ title: 'Error!', message: 'Connection error!' })
+        console.error(error);
     }
 }
 
@@ -128,12 +129,9 @@ const fetchPosts = async () => {
         });
 
         const data = await res.json()
-
-        if (res.ok) {
-            posts.value = data
-        }
+        if (res.ok) posts.value = data
     } catch (error) {
-        toast.error({ title: 'Error!', message: 'Connection error!' })
+        console.error(error);
     }
 }
 
@@ -147,7 +145,7 @@ const fetchUserClubs = async () => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authCookie.value.token}`
             },
-            body: JSON.stringify({ userId: userId.value })
+            body: JSON.stringify({ userId: userId.value }) 
         });
 
         const data = await res.json();
@@ -155,12 +153,12 @@ const fetchUserClubs = async () => {
             userClubs.value = data;
         }
     } catch (error) {
-        toast.error({ title: 'Error!', message: 'Connection error!' })
+        console.error(error);
     }
 }
 
 const joinClub = async () => {
-    if (!userId.value) return;
+    if (isMember.value) return; 
 
     try {
         const res = await fetch(`/clubeo_php_api/insertClubMembers.php`, {
@@ -176,8 +174,14 @@ const joinClub = async () => {
 
         if (res.ok) {
             toast.success({ title: 'Success!', message: 'Joined the club successfully!' })
-            await fetchClubDetails();
-            await fetchUserClubs();
+            
+            await Promise.all([
+                fetchClubDetails(),
+                fetchUserClubs()
+            ]);
+        } else {
+             const err = await res.json();
+             toast.error({ title: 'Error', message: err.message || 'Failed to join' })
         }
     } catch (error) {
         toast.error({ title: 'Error!', message: 'Connection error!' })
@@ -192,14 +196,10 @@ const likePost = async (postId) => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authCookie.value.token}`
             },
-            body: JSON.stringify({
-                postId: postId
-            })
+            body: JSON.stringify({ postId: postId })
         });
 
-        if (res.ok) {
-            fetchPosts();
-        }
+        if (res.ok) fetchPosts();
     } catch (error) {
         console.error(error)
     }

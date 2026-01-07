@@ -29,9 +29,23 @@ try {
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
 
+    if (!isset($data['clubId'])) {
+        throw new Exception("Club ID required");
+    }
+
     $clubId = $data['clubId'];
 
     $pdo->beginTransaction();
+
+    $checkSql = "SELECT id FROM club_members WHERE club_id = :clubId AND user_id = :userId";
+    $stmtCheck = $pdo->prepare($checkSql);
+    $stmtCheck->execute(['clubId' => $clubId, 'userId' => $userId]);
+
+    if ($stmtCheck->rowCount() > 0) {
+        $pdo->rollBack();
+        echo json_encode(["message" => "Already a member"]);
+        exit;
+    }
 
     $stmt = $pdo->prepare("INSERT INTO club_members (club_id, user_id, role) VALUES (:clubId, :userId, :role)");
     $stmt->execute([
@@ -48,7 +62,7 @@ try {
     http_response_code(200);
     echo json_encode(["message" => "Joined club successfully"]);
 
-} catch (PDOException $e) {
+} catch (Exception $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
