@@ -80,7 +80,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue' // Adicionei 'watch'
 import { useRoute } from 'vue-router'
 
 const authCookie = useCookie('auth_data')
@@ -89,55 +89,58 @@ const route = useRoute()
 
 const posts = ref([])
 const club = ref(null)
-const userClubs = ref([])
+const userClubs = ref([]) 
 
-const clubIdFromRoute = route.params.id
+const clubIdFromRoute = computed(() => route.params.id)
 
 const userId = computed(() => authCookie.value?.user?.id || null)
 
 const isMember = computed(() => {
-    if (!userClubs.value || userClubs.value.length === 0) return false;
+    if (!userClubs.value || userClubs.value.length === 0) return false
+
+    const targetId = Number(clubIdFromRoute.value)
     
-    return userClubs.value.some(c => Number(c.id) === Number(clubIdFromRoute));
+    const found = userClubs.value.some(c => Number(c.id) === targetId)
+    
+    console.log(`Verificando membro: ClubID=${targetId}, Encontrado=${found}`)
+    
+    return found
 })
 
 const toPost = () => {
     navigateTo({
         path: `/club/create-post`,
-        query: { clubId: clubIdFromRoute }
+        query: { clubId: clubIdFromRoute.value }
     })
 }
 
 const fetchClubDetails = async () => {
     try {
-        const res = await fetch(`/clubeo_php_api/getClubDetails.php?id=${clubIdFromRoute}`);
+        const res = await fetch(`/clubeo_php_api/getClubDetails.php?id=${clubIdFromRoute.value}`);
         const data = await res.json()
         if (res.ok) club.value = data
     } catch (error) {
-        console.error(error);
+        console.error("Erro detalhes clube:", error)
     }
 }
 
 const fetchPosts = async () => {
     try {
-        const res = await fetch(`/clubeo_php_api/getPosts.php?id=${clubIdFromRoute}`, {
+        const res = await fetch(`/clubeo_php_api/getPosts.php?id=${clubIdFromRoute.value}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authCookie.value.token}`
             },
         });
-
         const data = await res.json()
         if (res.ok) posts.value = data
     } catch (error) {
-        console.error(error);
+        console.error("Erro posts:", error)
     }
 }
 
 const fetchUserClubs = async () => {
-    if (!userId.value) return;
-
     try {
         const res = await fetch(`/clubeo_php_api/getUserClubs.php`, {
             method: "POST",
@@ -145,20 +148,21 @@ const fetchUserClubs = async () => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authCookie.value.token}`
             },
-            body: JSON.stringify({ userId: userId.value }) 
+            body: JSON.stringify({ userId: userId.value })
         });
 
         const data = await res.json();
         if (res.ok) {
             userClubs.value = data;
+            console.log("Os meus clubes carregados:", data)
         }
     } catch (error) {
-        console.error(error);
+        console.error("Erro user clubs:", error)
     }
 }
 
 const joinClub = async () => {
-    if (isMember.value) return; 
+    if (isMember.value) return;
 
     try {
         const res = await fetch(`/clubeo_php_api/insertClubMembers.php`, {
@@ -168,20 +172,23 @@ const joinClub = async () => {
                 "Authorization": `Bearer ${authCookie.value.token}`
             },
             body: JSON.stringify({
-                clubId: clubIdFromRoute,
+                clubId: clubIdFromRoute.value,
             })
         });
+
+        const data = await res.json();
 
         if (res.ok) {
             toast.success({ title: 'Success!', message: 'Joined the club successfully!' })
             
-            await Promise.all([
-                fetchClubDetails(),
-                fetchUserClubs()
-            ]);
+            await fetchUserClubs(); 
+            await fetchClubDetails();
         } else {
-             const err = await res.json();
-             toast.error({ title: 'Error', message: err.message || 'Failed to join' })
+            if (data.message === "Already a member") {
+                await fetchUserClubs();
+            } else {
+                toast.error({ title: 'Error', message: data.message || 'Error joining' })
+            }
         }
     } catch (error) {
         toast.error({ title: 'Error!', message: 'Connection error!' })
