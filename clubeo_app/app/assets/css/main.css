@@ -6,14 +6,13 @@
   /* (Light Mode) */
   --background: #F3F4F6;
   --cards_menus: #FFFFFF;
-  --first_text: #1F2937;
+  --first_text: #111827;
   --second_text: #6B7280;
-  --buttons-text: #F9FAFB;
-  --highlight: #2541B2;
+  --highlight: #6366F1;
   --corners: #E5E7EB;
-  --error: #EF4444;
-  --warning: #F59E0B;
-  --success: #10B981;
+  --error: #C84C4C;
+  --warning: #D1913C; 
+  --success: #5B9271; 
 }
 
 .dark {
@@ -22,8 +21,7 @@
   --cards_menus: #1F2937;
   --first_text: #F9FAFB;
   --second_text: #9CA3AF;
-  --buttons-text: #F9FAFB;
-  --highlight: #1c289b;
+  --highlight: #818cf8;
   --corners: #374151;
   --error: #E57373;
   --warning: #F0B44D;
